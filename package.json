@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.17",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -38,10 +41,16 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-async-generator-functions": "^7.23.3",
     "@babel/plugin-transform-class-properties": "^7.23.3",
+    "@babel/plugin-transform-dynamic-import": "^7.23.3",
+    "@babel/plugin-transform-json-strings": "^7.23.3",
     "@babel/plugin-transform-nullish-coalescing-operator": "^7.23.3",
     "@babel/plugin-transform-numeric-separator": "^7.23.3",
+    "@babel/plugin-transform-object-rest-spread": "^7.23.3",
+    "@babel/plugin-transform-optional-catch-binding": "^7.23.3",
     "@babel/plugin-transform-private-methods": "^7.23.3",
+    "@babel/plugin-transform-unicode-property-regex": "^7.23.3",
     "@rollup/plugin-terser": "^0.4.4"
   }
 }
