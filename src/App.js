@@ -42,7 +42,7 @@ function App() {
                     primary={`${product.productName}`}
                     secondary={
                       <>
-                        <div>Preis: {product.price}€</div>
+                        <div>Preis: €{product.price.toFixed(2)}</div>
                         <div>Kalorien: {product.calories}</div>
                         <div>Zutaten: {product.ingredients}</div>
                       </>
