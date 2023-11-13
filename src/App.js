@@ -15,7 +15,7 @@ function App() {
             'Content-Type': 'application/json',
           }
         });
-        setProducts(response.data.products || []);
+        setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
