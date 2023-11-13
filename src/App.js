@@ -39,7 +39,7 @@ function App() {
               <React.Fragment key={product.productID}>
                 <ListItem>
                   <ListItemText
-                    primary={`${product.productName} - €${product.price}`}
+                    primary={`${product.productName}`}
                     secondary={
                       <>
                         <div>Preis: {product.price}€</div>
