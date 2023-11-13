@@ -39,8 +39,8 @@ function App() {
               <React.Fragment key={product.productID}>
                 <ListItem>
                   <ListItemText
-                    primary={`${product.productName} - €${product.price}`}
-                    secondary={`Kalorien: ${product.calories}, Zutaten: ${product.ingredients}`}
+                    primary={`${product.productName}`}
+                    secondary={`Preis: ${product.price} \nKalorien: ${product.calories} \nZutaten: ${product.ingredients}`}
                   />
                 </ListItem>
                 <Divider />
