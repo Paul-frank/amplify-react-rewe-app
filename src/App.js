@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Typography, Box, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -50,6 +52,10 @@ function App() {
     setSortConfig({ key, direction });
   }
 
+  const getSortIcon = (column) => {
+    return sortConfig && sortConfig.key === column ? (sortConfig.direction === 'ascending' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />) : null;
+  }
+
   return (
     <Container maxWidth="md">
       <Box my={4} textAlign="center">
@@ -63,15 +69,15 @@ function App() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell onClick={() => requestSort('productName')}>Produktname</TableCell>
-                  <TableCell onClick={() => requestSort('energie')}>Energie</TableCell>
-                  <TableCell onClick={() => requestSort('fett')}>Fett</TableCell>
-                  <TableCell onClick={() => requestSort('gesättigteFettsäuren')}>Gesättigte Fettsäuren</TableCell>
-                  <TableCell onClick={() => requestSort('kohlenhydrate')}>Kohlenhydrate</TableCell>
-                  <TableCell onClick={() => requestSort('zucker')}>Zucker</TableCell>
-                  <TableCell onClick={() => requestSort('ballaststoffe')}>Ballaststoffe</TableCell>
-                  <TableCell onClick={() => requestSort('eiweiß')}>Eiweiß</TableCell>
-                  <TableCell onClick={() => requestSort('salz')}>Salz</TableCell>
+                  <TableCell onClick={() => requestSort('productName')}>Produktname{getSortIcon('productName')}</TableCell>
+                  <TableCell onClick={() => requestSort('energie')}>Energie{getSortIcon('energie')}</TableCell>
+                  <TableCell onClick={() => requestSort('fett')}>Fett{getSortIcon('fett')}</TableCell>
+                  <TableCell onClick={() => requestSort('gesättigteFettsäuren')}>Gesättigte Fettsäuren{getSortIcon('gesättigteFettsäuren')}</TableCell>
+                  <TableCell onClick={() => requestSort('kohlenhydrate')}>Kohlenhydrate{getSortIcon('kohlenhydrate')}</TableCell>
+                  <TableCell onClick={() => requestSort('zucker')}>Zucker{getSortIcon('zucker')}</TableCell>
+                  <TableCell onClick={() => requestSort('ballaststoffe')}>Ballaststoffe{getSortIcon('ballaststoffe')}</TableCell>
+                  <TableCell onClick={() => requestSort('eiweiß')}>Eiweiß{getSortIcon('eiweiß')}</TableCell>
+                  <TableCell onClick={() => requestSort('salz')}>Salz{getSortIcon('salz')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
