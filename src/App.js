@@ -46,8 +46,14 @@ function App() {
 
   const requestSort = (key) => {
     let direction = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    if (sortConfig && sortConfig.key === key) {
+      if (sortConfig.direction === 'ascending') {
+        direction = 'descending';
+      } else {
+        // Setzen Sie die SortConfig auf null, um die Sortierung zu entfernen
+        setSortConfig(null);
+        return; // Früher Abbruch, um keine weitere Sortierung zu setzen
+      }
     }
     setSortConfig({ key, direction });
   }
