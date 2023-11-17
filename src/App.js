@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Typography, Box, CircularProgress, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { Container, Typography, Box, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 function App() {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,6 +26,30 @@ function App() {
     fetchProducts();
   }, []);
 
+  const sortedProducts = React.useMemo(() => {
+    let sortableProducts = [...products];
+    if (sortConfig !== null) {
+      sortableProducts.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableProducts;
+  }, [products, sortConfig]);
+
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  }
+
   return (
     <Container maxWidth="md">
       <Box my={4} textAlign="center">
@@ -34,25 +59,28 @@ function App() {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <List>
-            {products.map((product) => (
-              <React.Fragment key={product.productID}>
-                <ListItem>
-                  <ListItemText
-                    primary={`${product.productName}`}
-                    secondary={
-                      <>
-                        <div>Preis: {product.price.toFixed(2)}€</div>
-                        <div>Kalorien: {product.calories}</div>
-                        <div>Zutaten: {product.ingredients}</div>
-                      </>
-                    }
-                  />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </List>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell onClick={() => requestSort('productName')}>Produktname</TableCell>
+                  <TableCell onClick={() => requestSort('energie')}>Energie</TableCell>
+                  <TableCell onClick={() => requestSort('fett')}>Fett</TableCell>
+                  {/* Weitere Spalten für gesättigte Fettsäuren, Kohlenhydrate, etc. */}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedProducts.map((product) => (
+                  <TableRow key={product.productID}>
+                    <TableCell>{product.productName}</TableCell>
+                    <TableCell>{product.energie}</TableCell>
+                    <TableCell>{product.fett}</TableCell>
+                    {/* Weitere Zellen für gesättigte Fettsäuren, Kohlenhydrate, etc. */}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </Box>
     </Container>
