@@ -66,7 +66,12 @@ function App() {
                   <TableCell onClick={() => requestSort('productName')}>Produktname</TableCell>
                   <TableCell onClick={() => requestSort('energie')}>Energie</TableCell>
                   <TableCell onClick={() => requestSort('fett')}>Fett</TableCell>
-                  {/* Weitere Spalten für gesättigte Fettsäuren, Kohlenhydrate, etc. */}
+                  <TableCell onClick={() => requestSort('gesättigteFettsäuren')}>Gesättigte Fettsäuren</TableCell>
+                  <TableCell onClick={() => requestSort('kohlenhydrate')}>Kohlenhydrate</TableCell>
+                  <TableCell onClick={() => requestSort('zucker')}>Zucker</TableCell>
+                  <TableCell onClick={() => requestSort('ballaststoffe')}>Ballaststoffe</TableCell>
+                  <TableCell onClick={() => requestSort('eiweiß')}>Eiweiß</TableCell>
+                  <TableCell onClick={() => requestSort('salz')}>Salz</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -75,7 +80,12 @@ function App() {
                     <TableCell>{product.productName}</TableCell>
                     <TableCell>{product.energie}</TableCell>
                     <TableCell>{product.fett}</TableCell>
-                    {/* Weitere Zellen für gesättigte Fettsäuren, Kohlenhydrate, etc. */}
+                    <TableCell>{product.gesättigteFettsäuren}</TableCell>
+                    <TableCell>{product.kohlenhydrate}</TableCell>
+                    <TableCell>{product.zucker}</TableCell>
+                    <TableCell>{product.ballaststoffe}</TableCell>
+                    <TableCell>{product.eiweiß}</TableCell>
+                    <TableCell>{product.salz}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
