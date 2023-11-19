@@ -43,23 +43,18 @@ function App() {
     }
 };
 
-
-  const sortedProducts = React.useMemo(() => {
-    let sortableProducts = [...products];
-    sortConfigs.forEach(sortConfig => {
-      sortableProducts.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    });
-    return sortableProducts;
-  }, [products, sortConfigs]);
-
+const sortedProducts = React.useMemo(() => {
+  return [...products].sort((a, b) => {
+    for (let config of sortConfigs) {
+      if (a[config.key] < b[config.key]) {
+        return config.direction === 'ascending' ? -1 : 1;
+      } else if (a[config.key] > b[config.key]) {
+        return config.direction === 'ascending' ? 1 : -1;
+      }
+    }
+    return 0;
+  });
+}, [products, sortConfigs]);
 
   const getSortIcon = (column) => {
     const sortConfig = sortConfigs.find(config => config.key === column);
