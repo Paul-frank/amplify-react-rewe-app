@@ -45,7 +45,8 @@ function App() {
 
 const sortedProducts = React.useMemo(() => {
   return [...products].sort((a, b) => {
-    for (let config of sortConfigs) {
+    for (let i = sortConfigs.length - 1; i >= 0; i--) {
+      const config = sortConfigs[i];
       if (a[config.key] !== b[config.key]) {
         return config.direction === 'ascending' ? (a[config.key] < b[config.key] ? -1 : 1) : (a[config.key] > b[config.key] ? -1 : 1);
       }
@@ -53,7 +54,6 @@ const sortedProducts = React.useMemo(() => {
     return 0;
   });
 }, [products, sortConfigs]);
-
 
   const getSortIcon = (column) => {
     const sortConfig = sortConfigs.find(config => config.key === column);
