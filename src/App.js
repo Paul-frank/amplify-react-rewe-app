@@ -44,18 +44,22 @@ function App() {
     return sortableProducts;
   }, [products, sortConfig]);
 
+
   const requestSort = (key) => {
-    let direction = 'ascending';
     if (sortConfig && sortConfig.key === key) {
-      if (sortConfig.direction === 'ascending') {
-        direction = 'descending';
-      } else {
-        // Setzen Sie die SortConfig auf null, um die Sortierung zu entfernen
-        setSortConfig(null);
-        return; // Früher Abbruch, um keine weitere Sortierung zu setzen
+      switch (sortConfig.direction) {
+        case 'descending':
+          setSortConfig({ key, direction: 'ascending' });
+          break;
+        case 'ascending':
+          setSortConfig(null);
+          break;
+        default:
+          break;
       }
+    } else {
+      setSortConfig({ key, direction: 'descending' });
     }
-    setSortConfig({ key, direction });
   }
 
   const getSortIcon = (column) => {
