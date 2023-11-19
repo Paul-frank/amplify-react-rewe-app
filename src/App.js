@@ -60,8 +60,10 @@ function App() {
 
 
   const getSortIcon = (column) => {
-    return sortConfig && sortConfig.key === column ? (sortConfig.direction === 'ascending' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />) : null;
-  }
+    const sortConfig = sortConfigs.find(config => config.key === column);
+    return sortConfig ? (sortConfig.direction === 'ascending' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />) : null;
+  };
+  
 
   return (
     <Container maxWidth="md">
