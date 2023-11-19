@@ -7,7 +7,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 function App() {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [sortConfig, setSortConfig] = useState(null);
+  const [sortConfigs, setSortConfigs] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,9 +28,23 @@ function App() {
     fetchProducts();
   }, []);
 
+  const requestSort = (key) => {
+    const existingConfig = sortConfigs.find(config => config.key === key);
+    if (existingConfig) {
+      setSortConfigs(sortConfigs.map(config => {
+        if (config.key === key) {
+          return { ...config, direction: config.direction === 'ascending' ? 'descending' : 'ascending' };
+        }
+        return config;
+      }));
+    } else {
+      setSortConfigs([...sortConfigs, { key, direction: 'ascending' }]);
+    }
+  };
+
   const sortedProducts = React.useMemo(() => {
     let sortableProducts = [...products];
-    if (sortConfig !== null) {
+    sortConfigs.forEach(sortConfig => {
       sortableProducts.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -40,27 +54,10 @@ function App() {
         }
         return 0;
       });
-    }
+    });
     return sortableProducts;
-  }, [products, sortConfig]);
+  }, [products, sortConfigs]);
 
-
-  const requestSort = (key) => {
-    if (sortConfig && sortConfig.key === key) {
-      switch (sortConfig.direction) {
-        case 'descending':
-          setSortConfig({ key, direction: 'ascending' });
-          break;
-        case 'ascending':
-          setSortConfig(null);
-          break;
-        default:
-          break;
-      }
-    } else {
-      setSortConfig({ key, direction: 'descending' });
-    }
-  }
 
   const getSortIcon = (column) => {
     return sortConfig && sortConfig.key === column ? (sortConfig.direction === 'ascending' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />) : null;
