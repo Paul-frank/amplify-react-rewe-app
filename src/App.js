@@ -31,16 +31,18 @@ function App() {
   const requestSort = (key) => {
     const existingConfig = sortConfigs.find(config => config.key === key);
     if (existingConfig) {
-      setSortConfigs(sortConfigs.map(config => {
-        if (config.key === key) {
-          return { ...config, direction: config.direction === 'ascending' ? 'descending' : 'ascending' };
+        if (existingConfig.direction === 'descending') {
+            setSortConfigs(sortConfigs.map(config =>
+                config.key === key ? { ...config, direction: 'ascending' } : config
+            ));
+        } else {
+            setSortConfigs(sortConfigs.filter(config => config.key !== key));
         }
-        return config;
-      }));
     } else {
-      setSortConfigs([...sortConfigs, { key, direction: 'ascending' }]);
+        setSortConfigs([...sortConfigs, { key, direction: 'descending' }]);
     }
-  };
+};
+
 
   const sortedProducts = React.useMemo(() => {
     let sortableProducts = [...products];
