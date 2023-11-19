@@ -7,7 +7,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 function App() {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [sortConfigs, setSortConfigs] = useState([]);
+  const [sortConfig, setSortConfig] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,32 +30,35 @@ function App() {
 
   const sortedProducts = React.useMemo(() => {
     let sortableProducts = [...products];
-    for (const config of sortConfigs) {
+    if (sortConfig !== null) {
       sortableProducts.sort((a, b) => {
-        if (a[config.key] < b[config.key]) {
-          return config.direction === 'ascending' ? -1 : 1;
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
         }
-        if (a[config.key] > b[config.key]) {
-          return config.direction === 'ascending' ? 1 : -1;
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
         }
         return 0;
       });
     }
     return sortableProducts;
-  }, [products, sortConfigs]);
+  }, [products, sortConfig]);
+
 
   const requestSort = (key) => {
-    const existingConfig = sortConfigs.find(config => config.key === key);
-    if (existingConfig) {
-      const newConfigs = sortConfigs.map(config => {
-        if (config.key === key) {
-          return { ...config, direction: config.direction === 'descending' ? 'ascending' : 'descending' };
-        }
-        return config;
-      });
-      setSortConfigs(newConfigs);
+    if (sortConfig && sortConfig.key === key) {
+      switch (sortConfig.direction) {
+        case 'descending':
+          setSortConfig({ key, direction: 'ascending' });
+          break;
+        case 'ascending':
+          setSortConfig(null);
+          break;
+        default:
+          break;
+      }
     } else {
-      setSortConfigs([...sortConfigs, { key, direction: 'descending' }]);
+      setSortConfig({ key, direction: 'descending' });
     }
   }
 
