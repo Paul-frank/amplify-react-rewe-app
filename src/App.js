@@ -46,15 +46,14 @@ function App() {
 const sortedProducts = React.useMemo(() => {
   return [...products].sort((a, b) => {
     for (let config of sortConfigs) {
-      if (a[config.key] < b[config.key]) {
-        return config.direction === 'ascending' ? -1 : 1;
-      } else if (a[config.key] > b[config.key]) {
-        return config.direction === 'ascending' ? 1 : -1;
+      if (a[config.key] !== b[config.key]) {
+        return config.direction === 'ascending' ? (a[config.key] < b[config.key] ? -1 : 1) : (a[config.key] > b[config.key] ? -1 : 1);
       }
     }
     return 0;
   });
 }, [products, sortConfigs]);
+
 
   const getSortIcon = (column) => {
     const sortConfig = sortConfigs.find(config => config.key === column);
