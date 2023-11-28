@@ -1,110 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, Box, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
-function App() {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [sortConfigs, setSortConfigs] = useState([]);
+import Home from './pages/Home/Home';
+import Statistics from './pages/Statistics/Statistics';
+import Navbar from './Components/Navbar/Navbar';
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get('https://2v2c6afkzg.execute-api.eu-central-1.amazonaws.com/default/reweApi/products', {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchProducts();
-  }, []);
-
-  const requestSort = (key) => {
-    const existingConfig = sortConfigs.find(config => config.key === key);
-    if (existingConfig) {
-        if (existingConfig.direction === 'descending') {
-            setSortConfigs(sortConfigs.map(config =>
-                config.key === key ? { ...config, direction: 'ascending' } : config
-            ));
-        } else {
-            setSortConfigs(sortConfigs.filter(config => config.key !== key));
-        }
-    } else {
-        setSortConfigs([...sortConfigs, { key, direction: 'descending' }]);
-    }
-};
-
-const sortedProducts = React.useMemo(() => {
-  return [...products].sort((a, b) => {
-    for (let i = sortConfigs.length - 1; i >= 0; i--) {
-      const config = sortConfigs[i];
-      if (a[config.key] !== b[config.key]) {
-        return config.direction === 'ascending' ? (a[config.key] < b[config.key] ? -1 : 1) : (a[config.key] > b[config.key] ? -1 : 1);
-      }
-    }
-    return 0;
-  });
-}, [products, sortConfigs]);
-
-  const getSortIcon = (column) => {
-    const sortConfig = sortConfigs.find(config => config.key === column);
-    return sortConfig ? (sortConfig.direction === 'ascending' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />) : null;
-  };
-  
-
+const App = () => {
   return (
-    <Container maxWidth="md">
-      <Box my={4} textAlign="center">
-        <Typography variant="h4" component="h1" gutterBottom>
-          Produktkatalog
-        </Typography>
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell onClick={() => requestSort('productName')}>Produktname{getSortIcon('productName')}</TableCell>
-                  <TableCell onClick={() => requestSort('energie')}>Energie{getSortIcon('energie')}</TableCell>
-                  <TableCell onClick={() => requestSort('fett')}>Fett{getSortIcon('fett')}</TableCell>
-                  <TableCell onClick={() => requestSort('gesättigteFettsäuren')}>Gesättigte Fettsäuren{getSortIcon('gesättigteFettsäuren')}</TableCell>
-                  <TableCell onClick={() => requestSort('kohlenhydrate')}>Kohlenhydrate{getSortIcon('kohlenhydrate')}</TableCell>
-                  <TableCell onClick={() => requestSort('zucker')}>Zucker{getSortIcon('zucker')}</TableCell>
-                  <TableCell onClick={() => requestSort('ballaststoffe')}>Ballaststoffe{getSortIcon('ballaststoffe')}</TableCell>
-                  <TableCell onClick={() => requestSort('eiweiß')}>Eiweiß{getSortIcon('eiweiß')}</TableCell>
-                  <TableCell onClick={() => requestSort('salz')}>Salz{getSortIcon('salz')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sortedProducts.map((product) => (
-                  <TableRow key={product.productID}>
-                    <TableCell>{product.productName}</TableCell>
-                    <TableCell>{product.energie}</TableCell>
-                    <TableCell>{product.fett}</TableCell>
-                    <TableCell>{product.gesättigteFettsäuren}</TableCell>
-                    <TableCell>{product.kohlenhydrate}</TableCell>
-                    <TableCell>{product.zucker}</TableCell>
-                    <TableCell>{product.ballaststoffe}</TableCell>
-                    <TableCell>{product.eiweiß}</TableCell>
-                    <TableCell>{product.salz}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Box>
-    </Container>
+   <Router>
+    <Navbar/>
+    <main>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/statistics" element={<Statistics />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+    </main>
+   </Router>
   );
 }
 

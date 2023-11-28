@@ -1,0 +1,12 @@
+.contentWrapper {
+    margin-left: 1%;
+    margin-right: 1%;
+    width: auto;
+}
+
+.tableHeaderCell {
+    background-color: #00000033;
+    color: #333;
+    font-weight: bolder;
+    font-size: larger;
+}
