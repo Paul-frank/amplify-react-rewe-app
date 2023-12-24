@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+//import { Chip } from "react-awesome-chip";
+import Chip from "@mui/material/Chip"; // Verwenden Sie MUI Chip, falls react-awesome-chip nicht funktioniert
 
 import "./Home.css";
 
@@ -23,7 +25,11 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [sortConfigs, setSortConfigs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // Neuer State für den Suchbegriff
+  const [searchTerm, setSearchTerm] = useState("");
+  const [positiveFilters, setPositiveFilters] = useState([]);
+  const [negativeFilters, setNegativeFilters] = useState([]);
+  const [positiveFilterInput, setPositiveFilterInput] = useState("");
+  const [negativeFilterInput, setNegativeFilterInput] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -93,6 +99,14 @@ const Home = () => {
     ) : null;
   };
 
+  const handleRemovePositiveFilter = (filter) => {
+    setPositiveFilters(positiveFilters.filter((f) => f !== filter));
+  };
+
+  const handleRemoveNegativeFilter = (filter) => {
+    setNegativeFilters(negativeFilters.filter((f) => f !== filter));
+  };
+
   // Funktion, die auf Änderungen im Suchfeld reagiert
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value.toLowerCase());
@@ -102,6 +116,38 @@ const Home = () => {
   const filteredProducts = sortedProducts.filter((product) =>
     product.productName.toLowerCase().includes(searchTerm)
   );
+
+  // Filtern der Produkte basierend auf positiven und negativen Filtern
+  const filteredProductsChips = sortedProducts.filter((product) => {
+    // Logik zum Überprüfen der positiven und negativen Filter
+    // Beispiel: return positiveFilters.every(filter => product.inhaltsstoffe.includes(filter)) && !negativeFilters.some(filter => product.inhaltsstoffe.includes(filter));
+  });
+
+  // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
+  const handlePositiveFilterInputChange = (event) => {
+    setPositiveFilterInput(event.target.value);
+  };
+
+  // Funktion zum Hinzufügen des positiven Filters
+  const handleAddPositiveFilter = () => {
+    if (positiveFilterInput) {
+      setPositiveFilters([...positiveFilters, positiveFilterInput]);
+      setPositiveFilterInput(""); // Eingabefeld leeren
+    }
+  };
+
+  // Funktion zum Hinzufügen des negativen Filters
+  const handleAddNegativeFilter = () => {
+    if (negativeFilterInput) {
+      setNegativeFilters([...negativeFilters, negativeFilterInput]);
+      setNegativeFilterInput(""); // Eingabefeld leeren
+    }
+  };
+
+  // Funktion, die auf Änderungen im Eingabefeld für den negativen Filter reagiert
+  const handleNegativeFilterInputChange = (event) => {
+    setNegativeFilterInput(event.target.value);
+  };
 
   return (
     <div className="main-content">
@@ -117,6 +163,72 @@ const Home = () => {
             margin="normal"
             onChange={handleSearchChange}
           />
+          <Box display="flex" justifyContent="space-between" my={2}>
+            <TextField
+              label="Positiven Filter hinzufügen"
+              variant="outlined"
+              margin="normal"
+              value={positiveFilterInput}
+              onChange={handlePositiveFilterInputChange}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  handleAddPositiveFilter();
+                }
+              }}
+              style={{ marginRight: "10px", flex: 1 }}
+            />
+            <TextField
+              label="Negativen Filter hinzufügen"
+              variant="outlined"
+              margin="normal"
+              value={negativeFilterInput}
+              onChange={handleNegativeFilterInputChange}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  handleAddNegativeFilter();
+                }
+              }}
+              style={{ flex: 1 }}
+            />
+          </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Box
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                marginBottom: "20px",
+                maxWidth: "50%",
+              }}
+            >
+              {positiveFilters.map((filter, index) => (
+                <Chip
+                  key={index}
+                  label={filter}
+                  onDelete={() => handleRemovePositiveFilter(filter)}
+                  color="primary"
+                />
+              ))}
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                marginBottom: "20px",
+                maxWidth: "50%",
+              }}
+            >
+              {negativeFilters.map((filter, index) => (
+                <Chip
+                  key={index}
+                  label={filter}
+                  onDelete={() => handleRemoveNegativeFilter(filter)}
+                  color="secondary"
+                />
+              ))}
+            </Box>
+          </Box>
           {isLoading ? (
             <CircularProgress />
           ) : (
