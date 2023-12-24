@@ -181,7 +181,7 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {sortedProducts.map((product) => (
+                  {filteredProducts.map((product) => (
                     <TableRow key={product.productID}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie}</TableCell>
