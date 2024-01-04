@@ -199,6 +199,7 @@ const Home = () => {
                 label="Hauptkategorie"
                 onChange={(event) => setMainCategory(event.target.value)}
               >
+                <MenuItem value="">Keine Auswahl</MenuItem>
                 {categoryOptions.mainCategories.map((category) => (
                   <MenuItem key={category} value={category}>
                     {category}
