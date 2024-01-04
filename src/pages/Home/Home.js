@@ -187,7 +187,7 @@ const Home = () => {
             onChange={handleSearchChange}
           />
           <Box display="flex" justifyContent="space-between" my={2}>
-            <FormControl>
+            <FormControl style={{ marginRight: "10px", flex: 1 }}>
               <InputLabel id="main-category-label">Hauptkategorie</InputLabel>
               <Select
                 labelId="main-category-label"
@@ -202,9 +202,8 @@ const Home = () => {
                   </MenuItem>
                 ))}
               </Select>
-              style={{ marginRight: "10px", flex: 1 }}
             </FormControl>
-            <FormControl>
+            <FormControl style={{ flex: 1 }}>
               <InputLabel id="sub-category-label">Nebenkategorie</InputLabel>
               <Select
                 labelId="sub-category-label"
@@ -221,7 +220,6 @@ const Home = () => {
                     </MenuItem>
                   ))}
               </Select>
-              style={{ flex: 1 }}
             </FormControl>
           </Box>
           <Box display="flex" justifyContent="space-between" my={2}>
