@@ -2,6 +2,8 @@
   margin-left: 1%;
   margin-right: 1%;
   width: auto;
+  max-height: 100vh; /* oder eine andere passende Höhe */
+  overflow: auto;
 }
 
 .tableHeaderCell {
@@ -10,8 +12,9 @@
   font-weight: bolder;
   font-size: larger;
 }
-
+/*
 .scrollableTableContainer {
   max-height: 500px;
   overflow: auto;
 }
+*/

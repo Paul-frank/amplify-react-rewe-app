@@ -238,7 +238,7 @@ const Home = () => {
   return (
     <div className="main-content">
       <Container maxWidth="">
-        <Box my={4} className="contentWrapper">
+        <Box my={4} className="contentWrapper" onScroll={handleScroll}>
           <Typography variant="h4" component="h1" gutterBottom>
             Produktkatalog
           </Typography>
@@ -361,8 +361,8 @@ const Home = () => {
             <CircularProgress />
           ) : (
             <TableContainer
-              className="scrollableTableContainer"
-              onScroll={handleScroll}
+              //className="scrollableTableContainer"
+              //onScroll={handleScroll}
               component={Paper}
             >
               <Table>
