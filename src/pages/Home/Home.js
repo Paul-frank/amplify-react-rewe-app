@@ -41,6 +41,9 @@ const Home = () => {
       Lebensmittel: ["Brot", "Fleisch"],
     },
   });
+  const pageSize = 50; // Anzahl der Produkte pro Seite
+  const [currentPage, setCurrentPage] = useState(1);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -55,6 +58,7 @@ const Home = () => {
           }
         );
         setProducts(response.data);
+        setDisplayedProducts(response.data.slice(0, pageSize));
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -63,6 +67,19 @@ const Home = () => {
 
     fetchProducts();
   }, []);
+
+  const loadMoreProducts = () => {
+    const newDisplayedProducts = products.slice(0, currentPage * pageSize);
+    setDisplayedProducts(newDisplayedProducts);
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handleScroll = (event) => {
+    const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
+    if (scrollHeight - scrollTop === clientHeight) {
+      loadMoreProducts();
+    }
+  };
 
   const requestSort = (key) => {
     const existingConfig = sortConfigs.find((config) => config.key === key);
