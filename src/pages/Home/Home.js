@@ -146,7 +146,17 @@ const Home = () => {
 
   // Funktion, die auf Änderungen im Suchfeld reagiert
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
+    const searchTerm = event.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    if (searchTerm) {
+      const filtered = sortedProducts.filter((product) =>
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+      setVisibleProducts(filtered);
+    } else {
+      setVisibleProducts(sortedProducts.slice(0, 20));
+    }
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
