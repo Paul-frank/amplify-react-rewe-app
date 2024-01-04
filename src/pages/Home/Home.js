@@ -119,7 +119,7 @@ const Home = () => {
 
   const handleScroll = (event) => {
     const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-    if (scrollHeight - scrollTop === clientHeight) {
+    if (scrollHeight - scrollTop <= clientHeight + 5) {
       loadMoreProducts();
     }
   };
@@ -360,7 +360,11 @@ const Home = () => {
           {isLoading ? (
             <CircularProgress />
           ) : (
-            <TableContainer onScroll={handleScroll} component={Paper}>
+            <TableContainer
+              className="scrollableTableContainer"
+              onScroll={handleScroll}
+              component={Paper}
+            >
               <Table>
                 <TableHead>
                   <TableRow>
