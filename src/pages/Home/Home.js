@@ -116,22 +116,25 @@ const Home = () => {
   );
 
   // Filtern der Produkte basierend auf positiven und negativen Filtern
-  const filteredProductsChips = sortedProducts.filter((product) => {
-    const ingredients = product.ingredientStatement.toLowerCase();
+  const filteredProductsChips = React.useMemo(() => {
+    return sortedProducts.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
 
-    // Überprüft, ob alle positiven Filter in den Inhaltsstoffen des Produkts enthalten sind
-    const meetsPositiveFilters = positiveFilters.every((filter) =>
-      ingredients.includes(filter.toLowerCase())
-    );
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        ingredients.includes(filter.toLowerCase())
+      );
 
-    // Überprüft, ob keiner der negativen Filter in den Inhaltsstoffen des Produkts enthalten ist
-    const meetsNegativeFilters = negativeFilters.every(
-      (filter) => !ingredients.includes(filter.toLowerCase())
-    );
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) => !ingredients.includes(filter.toLowerCase())
+      );
 
-    // Produkt muss sowohl positive als auch negative Filterbedingungen erfüllen
-    return meetsPositiveFilters && meetsNegativeFilters;
-  });
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [sortedProducts, positiveFilters, negativeFilters, searchTerm]);
 
   // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
   const handlePositiveFilterInputChange = (event) => {
