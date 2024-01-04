@@ -117,8 +117,10 @@ const Home = () => {
 
   // Filtern der Produkte basierend auf positiven und negativen Filtern
   const filteredProductsChips = sortedProducts.filter((product) => {
-    // Logik zum Überprüfen der positiven und negativen Filter
-    // Beispiel: return positiveFilters.every(filter => product.inhaltsstoffe.includes(filter)) && !negativeFilters.some(filter => product.inhaltsstoffe.includes(filter));
+    // Hier wird überprüft, ob alle positiven Filter in den Inhaltsstoffen des Produkts enthalten sind
+    return positiveFilters.every((filter) =>
+      product.ingredientStatement.toLowerCase().includes(filter.toLowerCase())
+    );
   });
 
   // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
@@ -256,7 +258,7 @@ const Home = () => {
                       className="tableHeaderCell"
                       onClick={() => requestSort("sugar_gramm")}
                     >
-                      Suger(g){getSortIcon("sugar_gramm")}
+                      Zucker(g){getSortIcon("sugar_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
@@ -280,7 +282,7 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredProducts.map((product) => (
+                  {filteredProductsChips.map((product) => (
                     <TableRow key={product.product_Id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
@@ -294,85 +296,6 @@ const Home = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            /*
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("productName")}
-                    >
-                      Produktname{getSortIcon("productName")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("energie")}
-                    >
-                      Energie{getSortIcon("energie")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("fett")}
-                    >
-                      Fett{getSortIcon("fett")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("gesättigteFettsäuren")}
-                    >
-                      Gesättigte Fettsäuren{getSortIcon("gesättigteFettsäuren")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("kohlenhydrate")}
-                    >
-                      Kohlenhydrate{getSortIcon("kohlenhydrate")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("zucker")}
-                    >
-                      Zucker{getSortIcon("zucker")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("ballaststoffe")}
-                    >
-                      Ballaststoffe{getSortIcon("ballaststoffe")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("eiweiß")}
-                    >
-                      Eiweiß{getSortIcon("eiweiß")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("salz")}
-                    >
-                      Salz{getSortIcon("salz")}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.productID}>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>{product.energie}</TableCell>
-                      <TableCell>{product.fett}</TableCell>
-                      <TableCell>{product.gesättigteFettsäuren}</TableCell>
-                      <TableCell>{product.kohlenhydrate}</TableCell>
-                      <TableCell>{product.zucker}</TableCell>
-                      <TableCell>{product.ballaststoffe}</TableCell>
-                      <TableCell>{product.eiweiß}</TableCell>
-                      <TableCell>{product.salz}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-            </Table>
-            </TableContainer>
-          */
           )}
         </Box>
       </Container>
