@@ -31,6 +31,24 @@ const Home = () => {
   const [positiveFilterInput, setPositiveFilterInput] = useState("");
   const [negativeFilterInput, setNegativeFilterInput] = useState("");
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop <
+          document.documentElement.offsetHeight - 100 || // 100 ist ein Schwellenwert
+        isLoading
+      )
+        return;
+      setCurrentPage((prevPage) => prevPage + 1);
+    };
+
+    // Event Listener hinzufügen
+    window.addEventListener("scroll", handleScroll);
+
+    // Event Listener entfernen, wenn die Komponente unmounted wird
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading]);
+
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -301,7 +319,7 @@ const Home = () => {
                 </TableHead>
                 <TableBody>
                   {filteredProducts.map((product) => (
-                    <TableRow key={product.product_Id}>
+                    <TableRow key={product.entry_id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
                       <TableCell>{product.kohlenhydrate_gramm}</TableCell>
