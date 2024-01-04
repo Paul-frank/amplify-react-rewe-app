@@ -42,34 +42,12 @@ const Home = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop <
-          document.documentElement.offsetHeight - 100 || // 100 ist ein Schwellenwert
-        isLoading
-      )
-        return;
-      setCurrentPage((prevPage) => prevPage + 1);
-    };
-
-    // Event Listener hinzufügen
-    window.addEventListener("scroll", handleScroll);
-
-    // Event Listener entfernen, wenn die Komponente unmounted wird
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoading]);
-
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(
         `https://rewefunction.azurewebsites.net/api/http-rewe-api?page=${currentPage}&pageSize=20`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
       setProducts((prevProducts) => [...prevProducts, ...response.data]);
       setHasMore(response.data.length > 0);
@@ -79,43 +57,25 @@ const Home = () => {
     setLoading(false);
   }, [currentPage]);
 
-  // Erster useEffect für das Laden der Produkte
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Zweiter useEffect für Infinite Scrolling
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight ||
-        isLoading
-      )
-        return;
-      setCurrentPage((prevPage) => prevPage + 1);
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 100 &&
+        !isLoading &&
+        hasMore
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoading]);
-
-  const requestSort = (key) => {
-    const existingConfig = sortConfigs.find((config) => config.key === key);
-    if (existingConfig) {
-      if (existingConfig.direction === "descending") {
-        setSortConfigs(
-          sortConfigs.map((config) =>
-            config.key === key ? { ...config, direction: "ascending" } : config
-          )
-        );
-      } else {
-        setSortConfigs(sortConfigs.filter((config) => config.key !== key));
-      }
-    } else {
-      setSortConfigs([...sortConfigs, { key, direction: "descending" }]);
-    }
-  };
+  }, [isLoading, hasMore]);
 
   const sortedProducts = React.useMemo(() => {
     return [...products].sort((a, b) => {
