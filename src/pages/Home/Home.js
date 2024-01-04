@@ -68,6 +68,10 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    setDisplayedProducts(filteredProducts.slice(0, currentPage * pageSize));
+  }, [filteredProducts, currentPage, pageSize]);
+
   const sortedDisplayedProducts = React.useMemo(() => {
     return [...displayedProducts].sort((a, b) => {
       for (let i = sortConfigs.length - 1; i >= 0; i--) {
@@ -184,9 +188,24 @@ const Home = () => {
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
-  const filteredProducts = sortedProducts.filter((product) =>
-    product.productName.toLowerCase().includes(searchTerm)
-  );
+  const filteredProducts = React.useMemo(() => {
+    return products.filter((product) => {
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        product.ingredientStatement.toLowerCase().includes(filter.toLowerCase())
+      );
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) =>
+          !product.ingredientStatement
+            .toLowerCase()
+            .includes(filter.toLowerCase())
+      );
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [products, positiveFilters, negativeFilters, searchTerm]);
 
   // Filtern der Produkte basierend auf positiven und negativen Filtern
   const filteredProductsChips = React.useMemo(() => {
