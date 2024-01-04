@@ -16,9 +16,7 @@ import {
 } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-//import { Chip } from "react-awesome-chip";
-import Chip from "@mui/material/Chip"; // Verwenden Sie MUI Chip, falls react-awesome-chip nicht funktioniert
-
+import Chip from "@mui/material/Chip";
 import "./Home.css";
 
 const Home = () => {
@@ -36,7 +34,7 @@ const Home = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://2v2c6afkzg.execute-api.eu-central-1.amazonaws.com/default/reweApi/products",
+          "https://rewefunction.azurewebsites.net/api/http-rewe-api",
           {
             headers: {
               "Content-Type": "application/json",
@@ -244,6 +242,46 @@ const Home = () => {
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
+                      onClick={() => requestSort("energie_kcal")}
+                    >
+                      Energie (kcal){getSortIcon("energie_kcal")}
+                    </TableCell>
+                    <TableCell
+                      className="tableHeaderCell"
+                      onClick={() => requestSort("fett_gramm")}
+                    >
+                      Fett (g){getSortIcon("fett_gramm")}
+                    </TableCell>
+                    // Fügen Sie hier weitere TableCell für andere Spalten hinzu
+                    // ...
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredProducts.map((product) => (
+                    <TableRow key={product.product_Id}>
+                      <TableCell>{product.productName}</TableCell>
+                      <TableCell>{product.energie_kcal}</TableCell>
+                      <TableCell>{product.fett_gramm}</TableCell>
+                      // Fügen Sie hier weitere TableCell für andere Spalten
+                      hinzu // ...
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            /*
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      className="tableHeaderCell"
+                      onClick={() => requestSort("productName")}
+                    >
+                      Produktname{getSortIcon("productName")}
+                    </TableCell>
+                    <TableCell
+                      className="tableHeaderCell"
                       onClick={() => requestSort("energie")}
                     >
                       Energie{getSortIcon("energie")}
@@ -307,8 +345,9 @@ const Home = () => {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+            </Table>
             </TableContainer>
+          */
           )}
         </Box>
       </Container>
