@@ -68,7 +68,9 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    setVisibleRecords(filteredProductsChips.slice(0, recordsPerPage));
+    if (filteredProductsChips && filteredProductsChips.length > 0) {
+      setVisibleRecords(filteredProductsChips.slice(0, recordsPerPage));
+    }
   }, [filteredProductsChips]);
 
   const loadMore = () => {
