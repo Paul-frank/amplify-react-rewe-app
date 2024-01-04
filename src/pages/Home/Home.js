@@ -68,10 +68,53 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  const sortedDisplayedProducts = React.useMemo(() => {
+    return [...displayedProducts].sort((a, b) => {
+      for (let i = sortConfigs.length - 1; i >= 0; i--) {
+        const config = sortConfigs[i];
+        if (a[config.key] !== b[config.key]) {
+          return config.direction === "ascending"
+            ? a[config.key] < b[config.key]
+              ? -1
+              : 1
+            : a[config.key] > b[config.key]
+            ? -1
+            : 1;
+        }
+      }
+      return 0;
+    });
+  }, [displayedProducts, sortConfigs]);
+
+  const filteredDisplayedProductsChips = React.useMemo(() => {
+    return sortedDisplayedProducts.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
+
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        ingredients.includes(filter.toLowerCase())
+      );
+
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) => !ingredients.includes(filter.toLowerCase())
+      );
+
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [sortedDisplayedProducts, positiveFilters, negativeFilters, searchTerm]);
+
   const loadMoreProducts = () => {
-    const newDisplayedProducts = products.slice(0, currentPage * pageSize);
-    setDisplayedProducts(newDisplayedProducts);
-    setCurrentPage(currentPage + 1);
+    if (currentPage * pageSize < products.length) {
+      const newDisplayedProducts = products.slice(
+        0,
+        (currentPage + 1) * pageSize
+      );
+      setDisplayedProducts(newDisplayedProducts);
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const handleScroll = (event) => {
@@ -367,7 +410,7 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredProductsChips.map((product) => (
+                  {filteredDisplayedProductsChips.map((product) => (
                     <TableRow key={product.product_Id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
