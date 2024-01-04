@@ -43,6 +43,9 @@ const Home = () => {
   }, []);
 
   const fetchProducts = useCallback(async () => {
+    // Speichern der aktuellen Scroll-Position
+    const currentScrollPosition = window.scrollY;
+
     setLoading(true);
     try {
       const response = await axios.get(
@@ -51,6 +54,9 @@ const Home = () => {
       );
       setProducts((prevProducts) => [...prevProducts, ...response.data]);
       setHasMore(response.data.length > 0);
+
+      // Scroll-Position nach dem Laden der Daten wiederherstellen
+      window.scrollTo(0, currentScrollPosition);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
