@@ -250,13 +250,13 @@ const Home = () => {
                       className="tableHeaderCell"
                       onClick={() => requestSort("kohlenhydrate_gramm")}
                     >
-                      Kohlenhydrate (kcal){getSortIcon("kohlenhydrate_gramm")}
+                      Kohlenhydrate (g){getSortIcon("kohlenhydrate_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("sugar_gramm")}
                     >
-                      Suger (kcal){getSortIcon("sugar_gramm")}
+                      Suger (g){getSortIcon("sugar_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
@@ -274,7 +274,7 @@ const Home = () => {
                       className="tableHeaderCell"
                       onClick={() => requestSort("ingredientStatement")}
                     >
-                      ingredientStatement (g)
+                      inhaltsstoffe
                       {getSortIcon("ingredientStatement")}
                     </TableCell>
                   </TableRow>
