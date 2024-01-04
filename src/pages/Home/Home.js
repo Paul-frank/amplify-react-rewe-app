@@ -202,6 +202,7 @@ const Home = () => {
                   </MenuItem>
                 ))}
               </Select>
+              style={{ marginRight: "10px", flex: 1 }}
             </FormControl>
             <FormControl>
               <InputLabel id="sub-category-label">Nebenkategorie</InputLabel>
@@ -220,6 +221,7 @@ const Home = () => {
                     </MenuItem>
                   ))}
               </Select>
+              style={{ flex: 1 }}
             </FormControl>
           </Box>
           <Box display="flex" justifyContent="space-between" my={2}>
