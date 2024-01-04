@@ -68,6 +68,13 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    // Stellen Sie sicher, dass die anzuzeigenden Produkte immer aktualisiert werden
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    setDisplayedProducts(filteredProducts.slice(start, end));
+  }, [filteredProducts, currentPage, pageSize]);
+
   const loadMoreProducts = () => {
     if (currentPage * pageSize < filteredProducts.length) {
       setCurrentPage(currentPage + 1);
@@ -114,7 +121,7 @@ const Home = () => {
 
   const handleScroll = (event) => {
     const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-    if (scrollHeight - scrollTop <= clientHeight + 5) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       loadMoreProducts();
     }
   };
