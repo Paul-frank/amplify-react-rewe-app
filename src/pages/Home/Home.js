@@ -67,8 +67,28 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  const sortedProducts = React.useMemo(() => {
+    return [...products].sort((a, b) => {
+      for (let i = sortConfigs.length - 1; i >= 0; i--) {
+        const config = sortConfigs[i];
+        if (a[config.key] !== b[config.key]) {
+          return config.direction === "ascending"
+            ? a[config.key] < b[config.key]
+              ? -1
+              : 1
+            : a[config.key] > b[config.key]
+            ? -1
+            : 1;
+        }
+      }
+      return 0;
+    });
+  }, [products, sortConfigs]);
+
   useEffect(() => {
-    setVisibleProducts(sortedProducts.slice(0, 20));
+    if (sortedProducts.length > 0) {
+      setVisibleProducts(sortedProducts.slice(0, 20));
+    }
   }, [sortedProducts]);
 
   const fetchMoreData = () => {
@@ -104,24 +124,6 @@ const Home = () => {
       setSortConfigs([...sortConfigs, { key, direction: "descending" }]);
     }
   };
-
-  const sortedProducts = React.useMemo(() => {
-    return [...products].sort((a, b) => {
-      for (let i = sortConfigs.length - 1; i >= 0; i--) {
-        const config = sortConfigs[i];
-        if (a[config.key] !== b[config.key]) {
-          return config.direction === "ascending"
-            ? a[config.key] < b[config.key]
-              ? -1
-              : 1
-            : a[config.key] > b[config.key]
-            ? -1
-            : 1;
-        }
-      }
-      return 0;
-    });
-  }, [products, sortConfigs]);
 
   const getSortIcon = (column) => {
     const sortConfig = sortConfigs.find((config) => config.key === column);
