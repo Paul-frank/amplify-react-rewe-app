@@ -77,6 +77,23 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isLoading, hasMore]);
 
+  const requestSort = (key) => {
+    const existingConfig = sortConfigs.find((config) => config.key === key);
+    if (existingConfig) {
+      if (existingConfig.direction === "descending") {
+        setSortConfigs(
+          sortConfigs.map((config) =>
+            config.key === key ? { ...config, direction: "ascending" } : config
+          )
+        );
+      } else {
+        setSortConfigs(sortConfigs.filter((config) => config.key !== key));
+      }
+    } else {
+      setSortConfigs([...sortConfigs, { key, direction: "descending" }]);
+    }
+  };
+
   const sortedProducts = React.useMemo(() => {
     return [...products].sort((a, b) => {
       for (let i = sortConfigs.length - 1; i >= 0; i--) {
