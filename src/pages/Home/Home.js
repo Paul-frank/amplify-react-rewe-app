@@ -68,9 +68,11 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    setDisplayedProducts(filteredProducts.slice(0, currentPage * pageSize));
-  }, [filteredProducts, currentPage, pageSize]);
+  const loadMoreProducts = () => {
+    if (currentPage * pageSize < filteredProducts.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   const sortedDisplayedProducts = React.useMemo(() => {
     return [...displayedProducts].sort((a, b) => {
@@ -109,17 +111,6 @@ const Home = () => {
       );
     });
   }, [sortedDisplayedProducts, positiveFilters, negativeFilters, searchTerm]);
-
-  const loadMoreProducts = () => {
-    if (currentPage * pageSize < products.length) {
-      const newDisplayedProducts = products.slice(
-        0,
-        (currentPage + 1) * pageSize
-      );
-      setDisplayedProducts(newDisplayedProducts);
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   const handleScroll = (event) => {
     const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
