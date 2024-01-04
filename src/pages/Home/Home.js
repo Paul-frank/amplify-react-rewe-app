@@ -197,7 +197,12 @@ const Home = () => {
                 id="main-category-select"
                 value={mainCategory}
                 label="Hauptkategorie"
-                onChange={(event) => setMainCategory(event.target.value)}
+                onChange={(event) => {
+                  setMainCategory(event.target.value);
+                  if (event.target.value === "") {
+                    setSubCategory(""); // Setzt auch subCategory zurück, wenn "Keine Auswahl" gewählt wird
+                  }
+                }}
               >
                 <MenuItem value="">Keine Auswahl</MenuItem>
                 {categoryOptions.mainCategories.map((category) => (
