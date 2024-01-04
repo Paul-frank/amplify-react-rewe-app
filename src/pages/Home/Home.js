@@ -42,6 +42,29 @@ const Home = () => {
     };
   }, []);
 
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setLastScrollTop(window.scrollY);
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 100 &&
+        !isLoading &&
+        hasMore
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading, hasMore, lastScrollTop]);
+
+  useEffect(() => {
+    window.scrollTo(0, lastScrollTop);
+  }, [products]);
+
   const fetchProducts = useCallback(async () => {
     // Speichern der aktuellen Scroll-Position
     const currentScrollPosition = window.scrollY;
