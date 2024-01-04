@@ -360,7 +360,7 @@ const Home = () => {
           {isLoading ? (
             <CircularProgress />
           ) : (
-            <TableContainer component={Paper}>
+            <TableContainer onScroll={handleScroll} component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
