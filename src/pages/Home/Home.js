@@ -248,12 +248,35 @@ const Home = () => {
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
+                      onClick={() => requestSort("kohlenhydrate_gramm")}
+                    >
+                      Kohlenhydrate (kcal){getSortIcon("kohlenhydrate_gramm")}
+                    </TableCell>
+                    <TableCell
+                      className="tableHeaderCell"
+                      onClick={() => requestSort("sugar_gramm")}
+                    >
+                      Suger (kcal){getSortIcon("sugar_gramm")}
+                    </TableCell>
+                    <TableCell
+                      className="tableHeaderCell"
                       onClick={() => requestSort("fett_gramm")}
                     >
                       Fett (g){getSortIcon("fett_gramm")}
                     </TableCell>
-                    // Fügen Sie hier weitere TableCell für andere Spalten hinzu
-                    // ...
+                    <TableCell
+                      className="tableHeaderCell"
+                      onClick={() => requestSort("eiweiß_gramm")}
+                    >
+                      Eiweiß (g){getSortIcon("eiweiß_gramm")}
+                    </TableCell>
+                    <TableCell
+                      className="tableHeaderCell"
+                      onClick={() => requestSort("ingredientStatement")}
+                    >
+                      ingredientStatement (g)
+                      {getSortIcon("ingredientStatement")}
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -261,9 +284,11 @@ const Home = () => {
                     <TableRow key={product.product_Id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
+                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                      <TableCell>{product.sugar_gramm}</TableCell>
                       <TableCell>{product.fett_gramm}</TableCell>
-                      // Fügen Sie hier weitere TableCell für andere Spalten
-                      hinzu // ...
+                      <TableCell>{product.eiweiß_gramm}</TableCell>
+                      <TableCell>{product.ingredientStatement}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
