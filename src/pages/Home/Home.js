@@ -28,6 +28,12 @@ const Home = () => {
   const [negativeFilters, setNegativeFilters] = useState([]);
   const [positiveFilterInput, setPositiveFilterInput] = useState("");
   const [negativeFilterInput, setNegativeFilterInput] = useState("");
+  const [mainCategory, setMainCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState({
+    mainCategories: [], // Beispielsweise ['Getränke', 'Lebensmittel']
+    subCategories: {}, // Beispielsweise {'Getränke': ['Wasser', 'Saft'], 'Lebensmittel': ['Brot', 'Fleisch']}
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -176,6 +182,42 @@ const Home = () => {
             margin="normal"
             onChange={handleSearchChange}
           />
+          <Box display="flex" justifyContent="space-between" my={2}>
+            <FormControl>
+              <InputLabel id="main-category-label">Hauptkategorie</InputLabel>
+              <Select
+                labelId="main-category-label"
+                id="main-category-select"
+                value={mainCategory}
+                label="Hauptkategorie"
+                onChange={(event) => setMainCategory(event.target.value)}
+              >
+                {categoryOptions.mainCategories.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel id="sub-category-label">Nebenkategorie</InputLabel>
+              <Select
+                labelId="sub-category-label"
+                id="sub-category-select"
+                value={subCategory}
+                label="Nebenkategorie"
+                onChange={(event) => setSubCategory(event.target.value)}
+                disabled={!mainCategory}
+              >
+                {mainCategory &&
+                  categoryOptions.subCategories[mainCategory].map((sub) => (
+                    <MenuItem key={sub} value={sub}>
+                      {sub}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Box>
           <Box display="flex" justifyContent="space-between" my={2}>
             <TextField
               label="Positiven Filter hinzufügen"
