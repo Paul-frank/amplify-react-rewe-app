@@ -32,6 +32,17 @@ const Home = () => {
   const [negativeFilterInput, setNegativeFilterInput] = useState("");
 
   useEffect(() => {
+    const savedPosition = sessionStorage.getItem("scrollPosition");
+    if (savedPosition) {
+      window.scrollTo(0, parseInt(savedPosition));
+    }
+
+    return () => {
+      sessionStorage.setItem("scrollPosition", window.scrollY);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop <
