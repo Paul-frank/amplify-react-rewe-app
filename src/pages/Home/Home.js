@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Container,
@@ -20,6 +20,8 @@ import Chip from "@mui/material/Chip";
 import "./Home.css";
 
 const Home = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [sortConfigs, setSortConfigs] = useState([]);
@@ -29,27 +31,45 @@ const Home = () => {
   const [positiveFilterInput, setPositiveFilterInput] = useState("");
   const [negativeFilterInput, setNegativeFilterInput] = useState("");
 
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://rewefunction.azurewebsites.net/api/http-rewe-api?page=${currentPage}&pageSize=20`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setProducts((prevProducts) => [...prevProducts, ...response.data]);
+      setHasMore(response.data.length > 0);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+    setLoading(false);
+  }, [currentPage]);
+
+  // Erster useEffect für das Laden der Produkte
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "https://rewefunction.azurewebsites.net/api/http-rewe-api",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-      setLoading(false);
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Zweiter useEffect für Infinite Scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+          document.documentElement.offsetHeight ||
+        isLoading
+      )
+        return;
+      setCurrentPage((prevPage) => prevPage + 1);
     };
 
-    fetchProducts();
-  }, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading]);
 
   const requestSort = (key) => {
     const existingConfig = sortConfigs.find((config) => config.key === key);
