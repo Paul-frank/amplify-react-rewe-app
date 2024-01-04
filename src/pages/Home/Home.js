@@ -244,37 +244,37 @@ const Home = () => {
                       className="tableHeaderCell"
                       onClick={() => requestSort("energie_kcal")}
                     >
-                      Energie (kcal){getSortIcon("energie_kcal")}
+                      Energie(kcal){getSortIcon("energie_kcal")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("kohlenhydrate_gramm")}
                     >
-                      Kohlenhydrate (g){getSortIcon("kohlenhydrate_gramm")}
+                      Kohlenhydrate(g){getSortIcon("kohlenhydrate_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("sugar_gramm")}
                     >
-                      Suger (g){getSortIcon("sugar_gramm")}
+                      Suger(g){getSortIcon("sugar_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("fett_gramm")}
                     >
-                      Fett (g){getSortIcon("fett_gramm")}
+                      Fett(g){getSortIcon("fett_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("eiweiß_gramm")}
                     >
-                      Eiweiß (g){getSortIcon("eiweiß_gramm")}
+                      Eiweiß(g){getSortIcon("eiweiß_gramm")}
                     </TableCell>
                     <TableCell
                       className="tableHeaderCell"
                       onClick={() => requestSort("ingredientStatement")}
                     >
-                      inhaltsstoffe
+                      Inhaltsstoffe
                       {getSortIcon("ingredientStatement")}
                     </TableCell>
                   </TableRow>
