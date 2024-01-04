@@ -75,8 +75,74 @@ const Home = () => {
     setDisplayedProducts(filteredProducts.slice(start, end));
   }, [filteredProducts, currentPage, pageSize]);
 
+  useEffect(() => {
+    // Laden Sie nur die Daten für die aktuelle Seite
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const newDisplayedProducts = applyFiltersAndSort(
+      products.slice(start, end)
+    );
+    setDisplayedProducts(newDisplayedProducts);
+  }, [
+    currentPage,
+    products,
+    positiveFilters,
+    negativeFilters,
+    searchTerm,
+    sortConfigs,
+  ]);
+
+  const applyFiltersAndSort = (products) => {
+    let filtered = products.filter((product) => {
+      // Filterlogik hier
+      // Beispiel:
+      return (
+        positiveFilters.every((filter) =>
+          product.ingredientStatement
+            .toLowerCase()
+            .includes(filter.toLowerCase())
+        ) &&
+        negativeFilters.every(
+          (filter) =>
+            !product.ingredientStatement
+              .toLowerCase()
+              .includes(filter.toLowerCase())
+        )
+      );
+    });
+
+    // Sortierlogik hier
+    // Beispiel:
+    sortConfigs.forEach((config) => {
+      filtered = filtered.sort((a, b) => {
+        if (a[config.key] < b[config.key])
+          return config.direction === "ascending" ? -1 : 1;
+        if (a[config.key] > b[config.key])
+          return config.direction === "ascending" ? 1 : -1;
+        return 0;
+      });
+    });
+
+    return filtered;
+  };
+
+  useEffect(() => {
+    // Update displayed products when currentPage or filters change
+    updateDisplayedProducts();
+  }, [currentPage, positiveFilters, negativeFilters, sortConfigs, searchTerm]);
+
+  const updateDisplayedProducts = () => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const newDisplayedProducts = applyFiltersAndSort(products).slice(
+      start,
+      end
+    );
+    setDisplayedProducts(newDisplayedProducts);
+  };
+
   const loadMoreProducts = () => {
-    if (currentPage * pageSize < filteredProducts.length) {
+    if (currentPage * pageSize < applyFiltersAndSort(products).length) {
       setCurrentPage(currentPage + 1);
     }
   };
