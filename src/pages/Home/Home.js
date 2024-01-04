@@ -69,13 +69,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    // Stellen Sie sicher, dass die anzuzeigenden Produkte immer aktualisiert werden
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    setDisplayedProducts(filteredProducts.slice(start, end));
-  }, [filteredProducts, currentPage, pageSize]);
-
-  useEffect(() => {
     // Laden Sie nur die Daten für die aktuelle Seite
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
