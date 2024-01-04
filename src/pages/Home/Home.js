@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Container,
@@ -20,8 +20,6 @@ import Chip from "@mui/material/Chip";
 import "./Home.css";
 
 const Home = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [sortConfigs, setSortConfigs] = useState([]);
@@ -32,79 +30,26 @@ const Home = () => {
   const [negativeFilterInput, setNegativeFilterInput] = useState("");
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem("scrollPosition");
-    if (savedPosition) {
-      window.scrollTo(0, parseInt(savedPosition));
-    }
-
-    return () => {
-      sessionStorage.setItem("scrollPosition", window.scrollY);
-    };
-  }, []);
-
-  const [lastScrollTop, setLastScrollTop] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setLastScrollTop(window.scrollY);
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 100 &&
-        !isLoading &&
-        hasMore
-      ) {
-        setCurrentPage((prevPage) => prevPage + 1);
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "https://rewefunction.azurewebsites.net/api/http-rewe-api",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
+      setLoading(false);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoading, hasMore, lastScrollTop]);
-
-  useEffect(() => {
-    window.scrollTo(0, lastScrollTop);
-  }, [products]);
-
-  const fetchProducts = useCallback(async () => {
-    // Speichern der aktuellen Scroll-Position
-    const currentScrollPosition = window.scrollY;
-
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `https://rewefunction.azurewebsites.net/api/http-rewe-api?page=${currentPage}&pageSize=20`,
-        { headers: { "Content-Type": "application/json" } }
-      );
-      setProducts((prevProducts) => [...prevProducts, ...response.data]);
-      setHasMore(response.data.length > 0);
-
-      // Scroll-Position nach dem Laden der Daten wiederherstellen
-      window.scrollTo(0, currentScrollPosition);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-    setLoading(false);
-  }, [currentPage]);
-
-  useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 100 &&
-        !isLoading &&
-        hasMore
-      ) {
-        setCurrentPage((prevPage) => prevPage + 1);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoading, hasMore]);
+  }, []);
 
   const requestSort = (key) => {
     const existingConfig = sortConfigs.find((config) => config.key === key);
@@ -336,7 +281,7 @@ const Home = () => {
                 </TableHead>
                 <TableBody>
                   {filteredProducts.map((product) => (
-                    <TableRow key={product.entry_id}>
+                    <TableRow key={product.product_Id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
                       <TableCell>{product.kohlenhydrate_gramm}</TableCell>
@@ -427,7 +372,7 @@ const Home = () => {
                 </TableBody>
             </Table>
             </TableContainer>
-              */
+          */
           )}
         </Box>
       </Container>
