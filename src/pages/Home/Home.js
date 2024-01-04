@@ -35,8 +35,11 @@ const Home = () => {
   const [mainCategory, setMainCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [categoryOptions, setCategoryOptions] = useState({
-    mainCategories: [], // Beispielsweise ['Getränke', 'Lebensmittel']
-    subCategories: {}, // Beispielsweise {'Getränke': ['Wasser', 'Saft'], 'Lebensmittel': ['Brot', 'Fleisch']}
+    mainCategories: ["Getränke", "Lebensmittel"],
+    subCategories: {
+      Getränke: ["Wasser", "Saft"],
+      Lebensmittel: ["Brot", "Fleisch"],
+    },
   });
 
   useEffect(() => {
