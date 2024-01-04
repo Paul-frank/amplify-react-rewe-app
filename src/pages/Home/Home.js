@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Container,
@@ -41,6 +41,43 @@ const Home = () => {
       Lebensmittel: ["Brot", "Fleisch"],
     },
   });
+
+  const [recordsPerPage] = useState(50);
+  const [visibleRecords, setVisibleRecords] = useState([]);
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const intersect = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "20px",
+        threshold: 1.0,
+      }
+    );
+
+    if (loader.current) {
+      intersect.observe(loader.current);
+    }
+
+    return () => intersect.disconnect();
+  }, []);
+
+  useEffect(() => {
+    setVisibleRecords(filteredProductsChips.slice(0, recordsPerPage));
+  }, [filteredProductsChips]);
+
+  const loadMore = () => {
+    const newVisibleRecords = filteredProductsChips.slice(
+      0,
+      visibleRecords.length + recordsPerPage
+    );
+    setVisibleRecords(newVisibleRecords);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -350,7 +387,7 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredProductsChips.map((product) => (
+                  {visibleRecords.map((product) => (
                     <TableRow key={product.product_Id}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.energie_kcal}</TableCell>
@@ -367,6 +404,7 @@ const Home = () => {
           )}
         </Box>
       </Container>
+      <div ref={loader} style={{ height: "100px", margin: "10px" }}></div>
     </div>
   );
 };
