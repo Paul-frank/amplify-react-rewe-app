@@ -117,10 +117,20 @@ const Home = () => {
 
   // Filtern der Produkte basierend auf positiven und negativen Filtern
   const filteredProductsChips = sortedProducts.filter((product) => {
-    // Hier wird überprüft, ob alle positiven Filter in den Inhaltsstoffen des Produkts enthalten sind
-    return positiveFilters.every((filter) =>
-      product.ingredientStatement.toLowerCase().includes(filter.toLowerCase())
+    const ingredients = product.ingredientStatement.toLowerCase();
+
+    // Überprüft, ob alle positiven Filter in den Inhaltsstoffen des Produkts enthalten sind
+    const meetsPositiveFilters = positiveFilters.every((filter) =>
+      ingredients.includes(filter.toLowerCase())
     );
+
+    // Überprüft, ob keiner der negativen Filter in den Inhaltsstoffen des Produkts enthalten ist
+    const meetsNegativeFilters = negativeFilters.every(
+      (filter) => !ingredients.includes(filter.toLowerCase())
+    );
+
+    // Produkt muss sowohl positive als auch negative Filterbedingungen erfüllen
+    return meetsPositiveFilters && meetsNegativeFilters;
   });
 
   // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
