@@ -201,6 +201,26 @@ const Home = () => {
     setNegativeFilterInput(event.target.value);
   };
 
+  const visibleFilteredProducts = React.useMemo(() => {
+    return visibleProducts.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
+
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        ingredients.includes(filter.toLowerCase())
+      );
+
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) => !ingredients.includes(filter.toLowerCase())
+      );
+
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [visibleProducts, positiveFilters, negativeFilters, searchTerm]);
+
   return (
     <div className="main-content">
       <Container maxWidth="">
@@ -382,7 +402,7 @@ const Home = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredProductsChips.map((product) => (
+                    {visibleFilteredProducts.map((product) => (
                       <TableRow key={product.product_Id}>
                         <TableCell>{product.productName}</TableCell>
                         <TableCell>{product.energie_kcal}</TableCell>
