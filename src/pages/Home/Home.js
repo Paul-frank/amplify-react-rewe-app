@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import {
   Container,
@@ -41,45 +42,8 @@ const Home = () => {
       Lebensmittel: ["Brot", "Fleisch"],
     },
   });
-
-  const [recordsPerPage] = useState(50);
-  const [visibleRecords, setVisibleRecords] = useState([]);
-  const loader = useRef(null);
-
-  useEffect(() => {
-    const intersect = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          loadMore();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "20px",
-        threshold: 1.0,
-      }
-    );
-
-    if (loader.current) {
-      intersect.observe(loader.current);
-    }
-
-    return () => intersect.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (filteredProductsChips && filteredProductsChips.length > 0) {
-      setVisibleRecords(filteredProductsChips.slice(0, recordsPerPage));
-    }
-  }, [filteredProductsChips]);
-
-  const loadMore = () => {
-    const newVisibleRecords = filteredProductsChips.slice(
-      0,
-      visibleRecords.length + recordsPerPage
-    );
-    setVisibleRecords(newVisibleRecords);
-  };
+  const [visibleProducts, setVisibleProducts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -102,6 +66,27 @@ const Home = () => {
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    setVisibleProducts(sortedProducts.slice(0, 20));
+  }, [sortedProducts]);
+
+  const fetchMoreData = () => {
+    if (visibleProducts.length >= sortedProducts.length) {
+      setHasMore(false);
+      return;
+    }
+    setTimeout(() => {
+      setVisibleProducts(
+        visibleProducts.concat(
+          sortedProducts.slice(
+            visibleProducts.length,
+            visibleProducts.length + 20
+          )
+        )
+      );
+    }, 1500);
+  };
 
   const requestSort = (key) => {
     const existingConfig = sortConfigs.find((config) => config.key === key);
@@ -339,74 +324,80 @@ const Home = () => {
           {isLoading ? (
             <CircularProgress />
           ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("productName")}
-                    >
-                      Produktname{getSortIcon("productName")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("energie_kcal")}
-                    >
-                      Energie(kcal){getSortIcon("energie_kcal")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("kohlenhydrate_gramm")}
-                    >
-                      Kohlenhydrate(g){getSortIcon("kohlenhydrate_gramm")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("sugar_gramm")}
-                    >
-                      Zucker(g){getSortIcon("sugar_gramm")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("fett_gramm")}
-                    >
-                      Fett(g){getSortIcon("fett_gramm")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("eiweiß_gramm")}
-                    >
-                      Eiweiß(g){getSortIcon("eiweiß_gramm")}
-                    </TableCell>
-                    <TableCell
-                      className="tableHeaderCell"
-                      onClick={() => requestSort("ingredientStatement")}
-                    >
-                      Inhaltsstoffe
-                      {getSortIcon("ingredientStatement")}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {visibleRecords.map((product) => (
-                    <TableRow key={product.product_Id}>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>{product.energie_kcal}</TableCell>
-                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
-                      <TableCell>{product.sugar_gramm}</TableCell>
-                      <TableCell>{product.fett_gramm}</TableCell>
-                      <TableCell>{product.eiweiß_gramm}</TableCell>
-                      <TableCell>{product.ingredientStatement}</TableCell>
+            <InfiniteScroll
+              dataLength={visibleProducts.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<h4>Loading...</h4>}
+            >
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("productName")}
+                      >
+                        Produktname{getSortIcon("productName")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("energie_kcal")}
+                      >
+                        Energie(kcal){getSortIcon("energie_kcal")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("kohlenhydrate_gramm")}
+                      >
+                        Kohlenhydrate(g){getSortIcon("kohlenhydrate_gramm")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("sugar_gramm")}
+                      >
+                        Zucker(g){getSortIcon("sugar_gramm")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("fett_gramm")}
+                      >
+                        Fett(g){getSortIcon("fett_gramm")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("eiweiß_gramm")}
+                      >
+                        Eiweiß(g){getSortIcon("eiweiß_gramm")}
+                      </TableCell>
+                      <TableCell
+                        className="tableHeaderCell"
+                        onClick={() => requestSort("ingredientStatement")}
+                      >
+                        Inhaltsstoffe
+                        {getSortIcon("ingredientStatement")}
+                      </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {filteredProductsChips.map((product) => (
+                      <TableRow key={product.product_Id}>
+                        <TableCell>{product.productName}</TableCell>
+                        <TableCell>{product.energie_kcal}</TableCell>
+                        <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                        <TableCell>{product.sugar_gramm}</TableCell>
+                        <TableCell>{product.fett_gramm}</TableCell>
+                        <TableCell>{product.eiweiß_gramm}</TableCell>
+                        <TableCell>{product.ingredientStatement}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </InfiniteScroll>
           )}
         </Box>
       </Container>
-      <div ref={loader} style={{ height: "100px", margin: "10px" }}></div>
     </div>
   );
 };
