@@ -203,17 +203,14 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
-    const start = pageSize * currentPage;
-    const end = start + pageSize;
-    const moreProducts = applyFilters(products.slice(start, end));
+    const startIndex = pageSize * currentPage;
+    const endIndex = startIndex + pageSize;
+    const newProducts = filterProducts(products.slice(startIndex, endIndex));
 
-    if (moreProducts.length > 0) {
-      setDisplayedProducts((prevProducts) => [
-        ...prevProducts,
-        ...moreProducts,
-      ]);
+    if (newProducts.length > 0) {
+      setDisplayedProducts((prevProducts) => [...prevProducts, ...newProducts]);
+      setCurrentPage(currentPage + 1);
     }
-    setCurrentPage(currentPage + 1);
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
@@ -242,6 +239,27 @@ const Home = () => {
     });
   }, [sortedProducts, positiveFilters, negativeFilters, searchTerm]);
 
+  // Funktion zum Anwenden der Filter auf die Produktdaten
+  const filterProducts = (productsToFilter) => {
+    return productsToFilter.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
+
+      const meetsPositiveFilters =
+        positiveFilters.length === 0 ||
+        positiveFilters.every((filter) =>
+          ingredients.includes(filter.toLowerCase())
+        );
+
+      const meetsNegativeFilters =
+        negativeFilters.length === 0 ||
+        negativeFilters.every(
+          (filter) => !ingredients.includes(filter.toLowerCase())
+        );
+
+      return meetsPositiveFilters && meetsNegativeFilters;
+    });
+  };
+
   // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
   const handlePositiveFilterInputChange = (event) => {
     setPositiveFilterInput(event.target.value);
@@ -267,6 +285,20 @@ const Home = () => {
   const handleNegativeFilterInputChange = (event) => {
     setNegativeFilterInput(event.target.value);
   };
+
+  const displayedProductsMemo = React.useMemo(() => {
+    let productsToShow = searchTerm ? searchResults : products;
+    productsToShow = filterProducts(productsToShow);
+
+    return productsToShow.slice(0, pageSize * currentPage);
+  }, [
+    products,
+    searchResults,
+    searchTerm,
+    currentPage,
+    positiveFilters,
+    negativeFilters,
+  ]);
 
   return (
     <div className="main-content">
@@ -443,19 +475,17 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(searchTerm ? searchResults : displayedProducts).map(
-                    (product) => (
-                      <TableRow key={product.product_Id}>
-                        <TableCell>{product.productName}</TableCell>
-                        <TableCell>{product.energie_kcal}</TableCell>
-                        <TableCell>{product.kohlenhydrate_gramm}</TableCell>
-                        <TableCell>{product.sugar_gramm}</TableCell>
-                        <TableCell>{product.fett_gramm}</TableCell>
-                        <TableCell>{product.eiweiß_gramm}</TableCell>
-                        <TableCell>{product.ingredientStatement}</TableCell>
-                      </TableRow>
-                    )
-                  )}
+                  {displayedProductsMemo.map((product) => (
+                    <TableRow key={product.product_Id}>
+                      <TableCell>{product.productName}</TableCell>
+                      <TableCell>{product.energie_kcal}</TableCell>
+                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                      <TableCell>{product.sugar_gramm}</TableCell>
+                      <TableCell>{product.fett_gramm}</TableCell>
+                      <TableCell>{product.eiweiß_gramm}</TableCell>
+                      <TableCell>{product.ingredientStatement}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>
