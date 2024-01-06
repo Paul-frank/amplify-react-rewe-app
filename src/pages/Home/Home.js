@@ -69,6 +69,59 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    applyFiltersAndSearch();
+  }, [positiveFilters, negativeFilters, searchTerm, products]);
+
+  const applyFiltersAndSearch = () => {
+    let filtered = products.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        ingredients.includes(filter.toLowerCase())
+      );
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) => !ingredients.includes(filter.toLowerCase())
+      );
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+
+    setDisplayedProducts(filtered.slice(0, pageSize));
+    setCurrentPage(1);
+  };
+
+  const loadMoreProducts = () => {
+    const start = pageSize * currentPage;
+    const end = start + pageSize;
+    const moreResults = products
+      .filter((product) => {
+        const ingredients = product.ingredientStatement.toLowerCase();
+        const meetsPositiveFilters = positiveFilters.every((filter) =>
+          ingredients.includes(filter.toLowerCase())
+        );
+        const meetsNegativeFilters = negativeFilters.every(
+          (filter) => !ingredients.includes(filter.toLowerCase())
+        );
+        return (
+          meetsPositiveFilters &&
+          meetsNegativeFilters &&
+          product.productName.toLowerCase().includes(searchTerm)
+        );
+      })
+      .slice(start, end);
+
+    if (moreResults.length > 0) {
+      setDisplayedProducts((prevDisplayed) => [
+        ...prevDisplayed,
+        ...moreResults,
+      ]);
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   const sortedDisplayedProducts = React.useMemo(() => {
     return [...displayedProducts].sort((a, b) => {
       for (let i = sortConfigs.length - 1; i >= 0; i--) {
@@ -173,37 +226,7 @@ const Home = () => {
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
     setCurrentPage(1); // Setzen Sie currentPage hier zurück
-
-    if (searchTerm) {
-      const filtered = products.filter((product) =>
-        product.productName.toLowerCase().includes(searchTerm)
-      );
-      setSearchResults(filtered.slice(0, 50));
-    } else {
-      setSearchResults([]);
-      setDisplayedProducts(products.slice(0, pageSize));
-    }
-  };
-
-  const loadMoreProducts = () => {
-    if (searchTerm) {
-      const start = pageSize * currentPage;
-      const end = start + pageSize;
-      const moreResults = products
-        .filter((product) =>
-          product.productName.toLowerCase().includes(searchTerm)
-        )
-        .slice(start, end);
-
-      if (moreResults.length > 0) {
-        setSearchResults((prevResults) => [...prevResults, ...moreResults]);
-      }
-    } else {
-      if (currentPage * pageSize < products.length) {
-        setDisplayedProducts(products.slice(0, (currentPage + 1) * pageSize));
-      }
-    }
-    setCurrentPage(currentPage + 1);
+    applyFiltersAndSearch(); // Aufruf von applyFiltersAndSearch, um gefilterte Produkte zu erhalten
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
@@ -257,6 +280,10 @@ const Home = () => {
   const handleNegativeFilterInputChange = (event) => {
     setNegativeFilterInput(event.target.value);
   };
+
+  useEffect(() => {
+    applyFiltersAndSearch();
+  }, [positiveFilters, negativeFilters, searchTerm, products]);
 
   return (
     <div className="main-content">
@@ -433,19 +460,17 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(searchTerm ? searchResults : displayedProducts).map(
-                    (product) => (
-                      <TableRow key={product.product_Id}>
-                        <TableCell>{product.productName}</TableCell>
-                        <TableCell>{product.energie_kcal}</TableCell>
-                        <TableCell>{product.kohlenhydrate_gramm}</TableCell>
-                        <TableCell>{product.sugar_gramm}</TableCell>
-                        <TableCell>{product.fett_gramm}</TableCell>
-                        <TableCell>{product.eiweiß_gramm}</TableCell>
-                        <TableCell>{product.ingredientStatement}</TableCell>
-                      </TableRow>
-                    )
-                  )}
+                  {displayedProducts.map((product) => (
+                    <TableRow key={product.product_Id}>
+                      <TableCell>{product.productName}</TableCell>
+                      <TableCell>{product.energie_kcal}</TableCell>
+                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                      <TableCell>{product.sugar_gramm}</TableCell>
+                      <TableCell>{product.fett_gramm}</TableCell>
+                      <TableCell>{product.eiweiß_gramm}</TableCell>
+                      <TableCell>{product.ingredientStatement}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>
