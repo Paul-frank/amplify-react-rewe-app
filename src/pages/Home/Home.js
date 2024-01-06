@@ -203,40 +203,29 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
-    // Prüfen, ob eine Suche aktiv ist
-    const isSearching = searchTerm !== "";
-
-    // Berechnet den Startindex für das Laden weiterer Produkte
     const startIndex = pageSize * currentPage;
+    let additionalProducts = [];
 
-    // Bestimmt die Produktliste, die verwendet werden soll
-    let nextProductsSlice = [];
-    if (isSearching) {
-      // Suchergebnisse werden auf Basis der gesamten Produktliste berechnet
-      const searchFilteredProducts = filterProducts(products).filter(
-        (product) =>
-          product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    if (searchTerm) {
+      // Berechnen der zusätzlichen Produkte basierend auf dem Suchbegriff
+      additionalProducts = products.filter((product) =>
+        product.productName.toLowerCase().includes(searchTerm.toLowerCase())
       );
-
-      // Schneidet die Produktliste auf die nächste Seite
-      nextProductsSlice = searchFilteredProducts.slice(
+      additionalProducts = filterProducts(additionalProducts).slice(
         startIndex,
         startIndex + pageSize
       );
     } else {
-      // Wenn nicht gesucht wird, einfach die nächste Seite der gefilterten Produkte laden
-      const filteredProducts = filterProducts(products);
-      nextProductsSlice = filteredProducts.slice(
-        startIndex,
-        startIndex + pageSize
+      // Laden der nächsten Seite der gefilterten Produkte, wenn keine Suche durchgeführt wird
+      additionalProducts = filterProducts(
+        products.slice(startIndex, startIndex + pageSize)
       );
     }
 
-    // Fügt die neuen Produkte hinzu, wenn welche verfügbar sind
-    if (nextProductsSlice.length > 0) {
+    if (additionalProducts.length > 0) {
       setDisplayedProducts((prevProducts) => [
         ...prevProducts,
-        ...nextProductsSlice,
+        ...additionalProducts,
       ]);
       setCurrentPage(currentPage + 1);
     }
