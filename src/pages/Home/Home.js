@@ -318,7 +318,7 @@ const Home = () => {
 
   return (
     <div className="main-content">
-      <Container maxWidth="">
+      <Container className="contentContainer" maxWidth="">
         <Box my={4} className="contentWrapper" onScroll={handleScroll}>
           <Typography variant="h4" component="h1" gutterBottom>
             Produktkatalog
