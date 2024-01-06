@@ -44,6 +44,7 @@ const Home = () => {
   const pageSize = 50; // Anzahl der Produkte pro Seite
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedProducts, setDisplayedProducts] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -105,17 +106,6 @@ const Home = () => {
       );
     });
   }, [sortedDisplayedProducts, positiveFilters, negativeFilters, searchTerm]);
-
-  const loadMoreProducts = () => {
-    if (currentPage * pageSize < products.length) {
-      const newDisplayedProducts = products.slice(
-        0,
-        (currentPage + 1) * pageSize
-      );
-      setDisplayedProducts(newDisplayedProducts);
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   const handleScroll = (event) => {
     const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
@@ -180,7 +170,38 @@ const Home = () => {
 
   // Funktion, die auf Änderungen im Suchfeld reagiert
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
+    const searchTerm = event.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    if (searchTerm) {
+      const filtered = products.filter((product) =>
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+      setSearchResults(filtered.slice(0, 50));
+    } else {
+      setSearchResults([]);
+      setDisplayedProducts(products.slice(0, pageSize));
+    }
+  };
+
+  const loadMoreProducts = () => {
+    if (searchTerm) {
+      if (searchResults.length >= pageSize * currentPage) {
+        setSearchResults((prevResults) => [
+          ...prevResults,
+          ...products
+            .filter((product) =>
+              product.productName.toLowerCase().includes(searchTerm)
+            )
+            .slice(pageSize * currentPage, pageSize * (currentPage + 1)),
+        ]);
+      }
+    } else {
+      if (currentPage * pageSize < products.length) {
+        setDisplayedProducts(products.slice(0, (currentPage + 1) * pageSize));
+      }
+    }
+    setCurrentPage(currentPage + 1);
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
@@ -360,11 +381,7 @@ const Home = () => {
           {isLoading ? (
             <CircularProgress />
           ) : (
-            <TableContainer
-              //className="scrollableTableContainer"
-              //onScroll={handleScroll}
-              component={Paper}
-            >
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -414,17 +431,19 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredDisplayedProductsChips.map((product) => (
-                    <TableRow key={product.product_Id}>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>{product.energie_kcal}</TableCell>
-                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
-                      <TableCell>{product.sugar_gramm}</TableCell>
-                      <TableCell>{product.fett_gramm}</TableCell>
-                      <TableCell>{product.eiweiß_gramm}</TableCell>
-                      <TableCell>{product.ingredientStatement}</TableCell>
-                    </TableRow>
-                  ))}
+                  {(searchTerm ? searchResults : displayedProducts).map(
+                    (product) => (
+                      <TableRow key={product.product_Id}>
+                        <TableCell>{product.productName}</TableCell>
+                        <TableCell>{product.energie_kcal}</TableCell>
+                        <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                        <TableCell>{product.sugar_gramm}</TableCell>
+                        <TableCell>{product.fett_gramm}</TableCell>
+                        <TableCell>{product.eiweiß_gramm}</TableCell>
+                        <TableCell>{product.ingredientStatement}</TableCell>
+                      </TableRow>
+                    )
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
