@@ -87,23 +87,6 @@ const Home = () => {
     });
   }, [displayedProducts, sortConfigs]);
 
-  const applyFilters = (productsList) => {
-    return productsList.filter((product) => {
-      const ingredients = product.ingredientStatement.toLowerCase();
-      const meetsPositiveFilters = positiveFilters.every((filter) =>
-        ingredients.includes(filter.toLowerCase())
-      );
-      const meetsNegativeFilters = negativeFilters.every(
-        (filter) => !ingredients.includes(filter.toLowerCase())
-      );
-      return (
-        meetsPositiveFilters &&
-        meetsNegativeFilters &&
-        product.productName.toLowerCase().includes(searchTerm)
-      );
-    });
-  };
-
   const filteredDisplayedProductsChips = React.useMemo(() => {
     return sortedDisplayedProducts.filter((product) => {
       const ingredients = product.ingredientStatement.toLowerCase();
@@ -203,32 +186,24 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
-    const startIndex = pageSize * currentPage;
-    let additionalProducts = [];
-
     if (searchTerm) {
-      // Berechnen der zusätzlichen Produkte basierend auf dem Suchbegriff
-      additionalProducts = products.filter((product) =>
-        product.productName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      additionalProducts = filterProducts(additionalProducts).slice(
-        startIndex,
-        startIndex + pageSize
-      );
-    } else {
-      // Laden der nächsten Seite der gefilterten Produkte, wenn keine Suche durchgeführt wird
-      additionalProducts = filterProducts(
-        products.slice(startIndex, startIndex + pageSize)
-      );
-    }
+      const start = pageSize * currentPage;
+      const end = start + pageSize;
+      const moreResults = products
+        .filter((product) =>
+          product.productName.toLowerCase().includes(searchTerm)
+        )
+        .slice(start, end);
 
-    if (additionalProducts.length > 0) {
-      setDisplayedProducts((prevProducts) => [
-        ...prevProducts,
-        ...additionalProducts,
-      ]);
-      setCurrentPage(currentPage + 1);
+      if (moreResults.length > 0) {
+        setSearchResults((prevResults) => [...prevResults, ...moreResults]);
+      }
+    } else {
+      if (currentPage * pageSize < products.length) {
+        setDisplayedProducts(products.slice(0, (currentPage + 1) * pageSize));
+      }
     }
+    setCurrentPage(currentPage + 1);
   };
 
   // Filtern der Produkte basierend auf dem Suchbegriff
@@ -257,27 +232,6 @@ const Home = () => {
     });
   }, [sortedProducts, positiveFilters, negativeFilters, searchTerm]);
 
-  // Funktion zum Anwenden der Filter auf die Produktdaten
-  const filterProducts = (productsToFilter) => {
-    return productsToFilter.filter((product) => {
-      const ingredients = product.ingredientStatement.toLowerCase();
-
-      const meetsPositiveFilters =
-        positiveFilters.length === 0 ||
-        positiveFilters.every((filter) =>
-          ingredients.includes(filter.toLowerCase())
-        );
-
-      const meetsNegativeFilters =
-        negativeFilters.length === 0 ||
-        negativeFilters.every(
-          (filter) => !ingredients.includes(filter.toLowerCase())
-        );
-
-      return meetsPositiveFilters && meetsNegativeFilters;
-    });
-  };
-
   // Funktion, die auf Änderungen im Eingabefeld für den positiven Filter reagiert
   const handlePositiveFilterInputChange = (event) => {
     setPositiveFilterInput(event.target.value);
@@ -304,23 +258,9 @@ const Home = () => {
     setNegativeFilterInput(event.target.value);
   };
 
-  const displayedProductsMemo = React.useMemo(() => {
-    let productsToShow = searchTerm ? searchResults : products;
-    productsToShow = filterProducts(productsToShow);
-
-    return productsToShow.slice(0, pageSize * currentPage);
-  }, [
-    products,
-    searchResults,
-    searchTerm,
-    currentPage,
-    positiveFilters,
-    negativeFilters,
-  ]);
-
   return (
     <div className="main-content">
-      <Container className="contentContainer" maxWidth="">
+      <Container maxWidth="">
         <Box my={4} className="contentWrapper" onScroll={handleScroll}>
           <Typography variant="h4" component="h1" gutterBottom>
             Produktkatalog
@@ -493,17 +433,19 @@ const Home = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {displayedProductsMemo.map((product) => (
-                    <TableRow key={product.product_Id}>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>{product.energie_kcal}</TableCell>
-                      <TableCell>{product.kohlenhydrate_gramm}</TableCell>
-                      <TableCell>{product.sugar_gramm}</TableCell>
-                      <TableCell>{product.fett_gramm}</TableCell>
-                      <TableCell>{product.eiweiß_gramm}</TableCell>
-                      <TableCell>{product.ingredientStatement}</TableCell>
-                    </TableRow>
-                  ))}
+                  {(searchTerm ? searchResults : displayedProducts).map(
+                    (product) => (
+                      <TableRow key={product.product_Id}>
+                        <TableCell>{product.productName}</TableCell>
+                        <TableCell>{product.energie_kcal}</TableCell>
+                        <TableCell>{product.kohlenhydrate_gramm}</TableCell>
+                        <TableCell>{product.sugar_gramm}</TableCell>
+                        <TableCell>{product.fett_gramm}</TableCell>
+                        <TableCell>{product.eiweiß_gramm}</TableCell>
+                        <TableCell>{product.ingredientStatement}</TableCell>
+                      </TableRow>
+                    )
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
