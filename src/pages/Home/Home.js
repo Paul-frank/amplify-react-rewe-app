@@ -186,15 +186,16 @@ const Home = () => {
 
   const loadMoreProducts = () => {
     if (searchTerm) {
-      if (searchResults.length >= pageSize * currentPage) {
-        setSearchResults((prevResults) => [
-          ...prevResults,
-          ...products
-            .filter((product) =>
-              product.productName.toLowerCase().includes(searchTerm)
-            )
-            .slice(pageSize * currentPage, pageSize * (currentPage + 1)),
-        ]);
+      const start = pageSize * currentPage;
+      const end = start + pageSize;
+      const moreResults = products
+        .filter((product) =>
+          product.productName.toLowerCase().includes(searchTerm)
+        )
+        .slice(start, end);
+
+      if (moreResults.length > 0) {
+        setSearchResults((prevResults) => [...prevResults, ...moreResults]);
       }
     } else {
       if (currentPage * pageSize < products.length) {
