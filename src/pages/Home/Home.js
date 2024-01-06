@@ -87,6 +87,23 @@ const Home = () => {
     });
   }, [displayedProducts, sortConfigs]);
 
+  const applyFilters = (productsList) => {
+    return productsList.filter((product) => {
+      const ingredients = product.ingredientStatement.toLowerCase();
+      const meetsPositiveFilters = positiveFilters.every((filter) =>
+        ingredients.includes(filter.toLowerCase())
+      );
+      const meetsNegativeFilters = negativeFilters.every(
+        (filter) => !ingredients.includes(filter.toLowerCase())
+      );
+      return (
+        meetsPositiveFilters &&
+        meetsNegativeFilters &&
+        product.productName.toLowerCase().includes(searchTerm)
+      );
+    });
+  };
+
   const filteredDisplayedProductsChips = React.useMemo(() => {
     return sortedDisplayedProducts.filter((product) => {
       const ingredients = product.ingredientStatement.toLowerCase();
@@ -186,22 +203,15 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
-    if (searchTerm) {
-      const start = pageSize * currentPage;
-      const end = start + pageSize;
-      const moreResults = products
-        .filter((product) =>
-          product.productName.toLowerCase().includes(searchTerm)
-        )
-        .slice(start, end);
+    const start = pageSize * currentPage;
+    const end = start + pageSize;
+    const moreProducts = applyFilters(products.slice(start, end));
 
-      if (moreResults.length > 0) {
-        setSearchResults((prevResults) => [...prevResults, ...moreResults]);
-      }
-    } else {
-      if (currentPage * pageSize < products.length) {
-        setDisplayedProducts(products.slice(0, (currentPage + 1) * pageSize));
-      }
+    if (moreProducts.length > 0) {
+      setDisplayedProducts((prevProducts) => [
+        ...prevProducts,
+        ...moreProducts,
+      ]);
     }
     setCurrentPage(currentPage + 1);
   };
