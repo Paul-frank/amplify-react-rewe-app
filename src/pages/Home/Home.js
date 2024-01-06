@@ -203,12 +203,19 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
+    // Bestimmt den nächsten Satz von Produkten, der geladen werden soll
     const startIndex = pageSize * currentPage;
     const endIndex = startIndex + pageSize;
-    const newProducts = filterProducts(products.slice(startIndex, endIndex));
 
-    if (newProducts.length > 0) {
-      setDisplayedProducts((prevProducts) => [...prevProducts, ...newProducts]);
+    // Bestimmt, welche Produktliste zu verwenden ist (gefiltert/gesucht oder gesamte Produktliste)
+    let nextProducts = searchTerm ? searchResults : products;
+    nextProducts = filterProducts(nextProducts.slice(startIndex, endIndex));
+
+    if (nextProducts.length > 0) {
+      setDisplayedProducts((prevProducts) => [
+        ...prevProducts,
+        ...nextProducts,
+      ]);
       setCurrentPage(currentPage + 1);
     }
   };
