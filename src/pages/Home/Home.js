@@ -172,6 +172,7 @@ const Home = () => {
   const handleSearchChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
+    setCurrentPage(1); // Setzen Sie currentPage hier zurück
 
     if (searchTerm) {
       const filtered = products.filter((product) =>
