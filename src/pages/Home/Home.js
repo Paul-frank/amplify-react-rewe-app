@@ -203,21 +203,34 @@ const Home = () => {
   };
 
   const loadMoreProducts = () => {
+    // Prüfen, ob eine Suche aktiv ist
+    const isSearching = searchTerm !== "";
+
     // Berechnet den Startindex für das Laden weiterer Produkte
     const startIndex = pageSize * currentPage;
 
     // Bestimmt die Produktliste, die verwendet werden soll
-    let nextProducts = searchTerm
-      ? filterProducts(products).filter((product) =>
+    let nextProductsSlice = [];
+    if (isSearching) {
+      // Suchergebnisse werden auf Basis der gesamten Produktliste berechnet
+      const searchFilteredProducts = filterProducts(products).filter(
+        (product) =>
           product.productName.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : filterProducts(products);
+      );
 
-    // Schneidet die Produktliste auf die nächste Seite
-    const nextProductsSlice = nextProducts.slice(
-      startIndex,
-      startIndex + pageSize
-    );
+      // Schneidet die Produktliste auf die nächste Seite
+      nextProductsSlice = searchFilteredProducts.slice(
+        startIndex,
+        startIndex + pageSize
+      );
+    } else {
+      // Wenn nicht gesucht wird, einfach die nächste Seite der gefilterten Produkte laden
+      const filteredProducts = filterProducts(products);
+      nextProductsSlice = filteredProducts.slice(
+        startIndex,
+        startIndex + pageSize
+      );
+    }
 
     // Fügt die neuen Produkte hinzu, wenn welche verfügbar sind
     if (nextProductsSlice.length > 0) {
