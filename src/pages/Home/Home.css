@@ -1,3 +1,7 @@
+.main-content {
+  overflow: hidden; /* oder 'auto', je nach Bedarf */
+}
+
 .contentWrapper {
   margin-left: 1%;
   margin-right: 1%;
